@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+
 namespace TSPJamaica
 {
     public partial class Form1 : Form
@@ -18,9 +19,9 @@ namespace TSPJamaica
         // Constructors for the Form1 class, initializes the form and sets up parishes and coordinates
         public Form1()
         {
-            InitializeComponent(); 
-            InitializeParishes();  
-            InitializeCoordinates(); 
+            InitializeComponent();
+            InitializeParishes();
+            InitializeCoordinates();
         }
 
         // Method to initialize the parishes in the ComboBox controls
@@ -98,8 +99,8 @@ namespace TSPJamaica
 
            
             Graph g = new Graph(parishCoordinates);
-            string path = ""; 
-            int distance = 0; 
+            string path = "";
+            int distance = 0;
             Stopwatch stopwatch = new Stopwatch(); // Stopwatch to measure algorithm execution time
 
             // Check which algorithm is selected and perform the search

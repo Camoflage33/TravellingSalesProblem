@@ -52,24 +52,26 @@ namespace TSPJamaica
         // Implementation of Dijkstra's algorithm 
         public int Dijkstra(int[,] graph, int startVertex, int endVertex, out string path)
         {
-            int[] dist = new int[V];      
+            int[] dist = new int[V];
             bool[] sptSet = new bool[V];   
-            int[] parents = new int[V];     
+            int[] parents = new int[V];
 
            
             for (int i = 0; i < V; i++)
             {
                 dist[i] = int.MaxValue;
                 sptSet[i] = false;
-                parents[i] = -1; 
+                parents[i] = -1;
             }
 
-            dist[startVertex] = 0; 
+            dist[startVertex] = 0;
 
            
             for (int count = 0; count < V - 1; count++)
             {
-                
+                int u = MinDistance(dist, shortestPathTreeSet);
+                shortestPathTreeSet[u] = true;
+
                 int u = MinDistance(dist, sptSet);
 
               
@@ -109,15 +111,15 @@ namespace TSPJamaica
                 }
             }
 
-            return minIndex; 
+            return minIndex;
         }
 
         // Implementation of the A* algorithm to find the shortest path from startVertex to endVertex
         public int AStar(int[,] graph, int startVertex, int endVertex, out string path)
         {
-            int[] dist = new int[V];        
+            int[] dist = new int[V];
             bool[] closedList = new bool[V];
-            int[] parents = new int[V];    
+            int[] parents = new int[V];
 
            
             for (int i = 0; i < V; i++)
@@ -127,12 +129,12 @@ namespace TSPJamaica
                 parents[i] = -1;
             }
 
-            dist[startVertex] = 0; 
+            dist[startVertex] = 0;
 
           
             SortedSet<(int, int)> openList = new SortedSet<(int, int)>();
             openList.Add((0, startVertex)); 
-           
+
             while (openList.Count > 0)
             {
                 var current = openList.Min; 
@@ -142,9 +144,14 @@ namespace TSPJamaica
                 if (u == endVertex)
                     break; 
 
-                closedList[u] = true; 
+                closedList[u] = true;
 
-                
+                if (u == endVertex)
+                {
+                    path = GetPath(parents, endVertex);
+                    return dist[u];
+                }
+
                 for (int v = 0; v < V; v++)
                 {
                     if (!closedList[v] && graph[u, v] != 0)
@@ -152,12 +159,12 @@ namespace TSPJamaica
                         int newDist = dist[u] + graph[u, v];
                         double heuristic = CalculateHeuristic(v, endVertex); 
 
-                        
+
                         if (newDist + heuristic < dist[v])
                         {
                             openList.Remove((dist[v], v)); 
                             dist[v] = newDist;
-                            parents[v] = u; 
+                            parents[v] = u;
                             openList.Add((dist[v] + (int)heuristic, v)); 
                         }
                     }
@@ -171,15 +178,15 @@ namespace TSPJamaica
         // Implementation of the Best-First Search algorithm to find the path from startVertex to endVertex
         public int BestFirstSearch(int[,] graph, int startVertex, int endVertex, out string path)
         {
-            bool[] visited = new bool[V];   
+            bool[] visited = new bool[V];
             int[] dist = new int[V];        
-            int[] parents = new int[V];     
+            int[] parents = new int[V];
             
             for (int i = 0; i < V; i++)
             {
                 visited[i] = false;
                 dist[i] = int.MaxValue;
-                parents[i] = -1; 
+                parents[i] = -1;
             }
 
             dist[startVertex] = 0; 
@@ -199,7 +206,7 @@ namespace TSPJamaica
                 if (u == endVertex)
                     break; 
 
-                visited[u] = true; 
+                visited[u] = true;
 
                 
                 for (int v = 0; v < V; v++)
@@ -215,13 +222,13 @@ namespace TSPJamaica
                             dist[v] = graph[u, v];
                             parents[v] = u; // Update the parent of vertex v
                         }
+                        }
                     }
                 }
-            }
 
             path = ConstructPath(parents, startVertex, endVertex); // Construct the path from the parents array
             return dist[endVertex]; // Return the distance to the endVertex
-        }
+            }
 
        
         private string ConstructPath(int[] parents, int startVertex, int endVertex)
@@ -234,7 +241,7 @@ namespace TSPJamaica
             {
                 stack.Push(vertex);
                 vertex = parents[vertex];
-            }
+        }
 
              
             return string.Join(" -> ", stack);
